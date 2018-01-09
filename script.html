@@ -16,7 +16,7 @@
         <div id="left_menu">
             <div id="left_list">
                 <input type="hidden" id='msg' name='msg' value="" />
-                <li>Comm. Port: </li>
+                <li>Comm. Port: (Not Implemented Yet) </li>
                 <input type="text" id="portId"/>
                 <li>Source: </li>
                 <input type="text" id="sourceId" class="hex_field" maxlength="2" value="00"/>
@@ -44,6 +44,7 @@ function buildDNP3Script () {
 
     arr1[4] = document.getElementById("targetId").value
     arr1[6] = document.getElementById("sourceId").value
+    arr1[10] = document.getElementById("controlId").value
 
     arr1.forEach(function(element){
             msgOut += element + ' '
