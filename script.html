@@ -1,0 +1,60 @@
+<html>
+
+<head>
+<meta tags="UDP3; script; scada" date="Jan 2018" version="0" />
+<! link rel = "Stylesheet" type = "text/css" href = "scripter.css" />
+<title>UDP3 Script Builder - Alpha</title>
+</head>
+
+<body>
+
+    <div id="body_main" class="body">
+    
+        <div id="top_nav" class="nav1"></div>
+        
+        <form action = "" method="POST">
+        <div id="left_menu">
+            <div id="left_list">
+                <input type="hidden" id='msg' name='msg' value="" />
+                <li>Comm. Port: </li>
+                <input type="text" id="portId"/>
+                <li>Source: </li>
+                <input type="text" id="sourceId" class="hex_field" maxlength="2" value="00"/>
+                <li>Target: </li>
+                <input type="text" id="targetId" class="hex_field"  maxlength="2" value="12"/>
+                <li>Code to Send: </li>
+                <input type="text" id="controlId" class="hex_field"  maxlength="2" value="01"/>
+                <br>
+                
+                <div style="align-items: center">
+                    <input id="sendBtn" type="submit" value='Send Script' style="width: 120px; height: 50px; font-size:large" />
+                </div>
+        </div>
+        </form>
+
+    </div>
+</body>
+<script>
+var inVals = [], ctlType = "c3", ctlAct = "", ctlFunctionCodes = {"Direct Operate": "05", "Read Object": "01"}
+
+
+function buildDNP3Script () {
+    var arr1 = ['05', '64', '0D', 'C4',,'00',,'00','C7', 'C3', '01', '1E', '02', '00', '00', '02']
+    var msgOut = "", arr2 = [], checkCode = 0, strBuilder = ""
+
+    arr1[4] = document.getElementById("targetId").value
+    arr1[6] = document.getElementById("sourceId").value
+
+    arr1.forEach(function(element){
+            msgOut += element + ' '
+    })
+
+      
+    document.getElementById('msg').value = msgOut
+}
+
+document.getElementById("sendBtn").addEventListener("click", buildDNP3Script, false)
+
+
+</script>
+</html>

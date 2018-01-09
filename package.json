@@ -1,0 +1,21 @@
+{
+  "name": "DPN3_Scripter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "assert": "^1.4.1",
+    "dnp3-crc": "^1.0.0",
+    "fs": "0.0.1-security",
+    "http": "0.0.0"
+  }
+}
