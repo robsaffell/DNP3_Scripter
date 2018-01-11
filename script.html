@@ -1,61 +1,104 @@
 <html>
-
-<head>
-<meta tags="UDP3; script; scada" date="Jan 2018" version="0" />
-<! link rel = "Stylesheet" type = "text/css" href = "scripter.css" />
-<title>UDP3 Script Builder - Alpha</title>
-</head>
-
-<body>
-
-    <div id="body_main" class="body">
     
-        <div id="top_nav" class="nav1"></div>
+    <head>
+    <meta tags="UDP3; script; scada" date="Jan 2018" version="0" />
+    <link rel = "Stylesheet" type = "text/css" href = "scripter.css" />
+    <title>UDP3 Script Builder - Alpha</title>
+    </head>
+    
+    <body>
+    
+        <div id="body_main" class="body">
         
-        <form action = "" method="POST">
-        <div id="left_menu">
-            <div id="left_list">
-                <input type="hidden" id='msg' name='msg' value="" />
-                <li>Comm. Port: (Not Implemented Yet) </li>
-                <input type="text" id="portId"/>
-                <li>Source: </li>
-                <input type="text" id="sourceId" class="hex_field" maxlength="2" value="00"/>
-                <li>Target: </li>
-                <input type="text" id="targetId" class="hex_field"  maxlength="2" value="12"/>
-                <li>Code to Send: </li>
-                <input type="text" id="controlId" class="hex_field"  maxlength="2" value="01"/>
-                <br>
-                
-                <div style="align-items: center">
-                    <input id="sendBtn" type="submit" value='Send Script' style="width: 120px; height: 50px; font-size:large" />
-                </div>
+            <div id="top_nav" class="nav1"></div>
+            
+            <! Form area that grabs input. All field inputs are pulled together into a single string send - see JS below />
+            <form action = "" method="POST">
+            <div id="left_menu">
+                <div id="left_list">
+                    <input type="hidden" id='msg' name='msg' value="" />
+                    <li>Comm. Port: (Number or 'serial')</li>
+                    <input type="text" id="portId"/>
+
+                    <li>Hash Algorithm: </li>
+                    <select id="hashId" value="sha1"/>
+                        <option value="sha1">SHA1</option>
+                        <option value="md5">MD5</option>
+                        <option value="ssl3-md5">SSL3-MD5</option>
+                        <option value="ssl3-sha1">SSL3-SHA1</option>
+                        <option value="shaWithRSAEncryption">SHA w RSA</option>
+                        <option value="sha512WithRSAEncryption">SHA512 w RSA</option>
+                    </select>
+
+                    <li>Source: </li>
+                    <input type="text" id="sourceId" class="hex_field" maxlength="2" value="00"/>
+                    <li>Source Sub-Unit: </li>
+                    <input type="text" id="sourceSubId" class="hex_field" maxlength="2" value="00"/>
+                    
+                    <li>Target: </li>
+                    <input type="text" id="targetId" class="hex_field"  maxlength="2" value="12"/>
+                    <li>Target Sub-Unit: </li>
+                    <input type="text" id="targetSubId" class="hex_field" maxlength="2" value="00"/>
+    
+                    <li>Code to Send: </li>
+                    <input type="text" id="controlId" class="hex_field"  maxlength="2" value="01"/>
+                    <br>
+                    
+                    <div style="align-items: center">
+                        <input id="sendBtn" type="submit" value='Send Script' style="width: 120px; height: 50px; font-size:large" />
+                    </div>
+            </div>
+            </form>
+    
         </div>
-        </form>
+    
+        <div id="right-menu"></div>
+    </body>
+    
+    <script>
+    
+    
+    //var ctlType = "c3", ctlAct = "", ctlFunctionCodes = {"Direct Operate": "05", "Read Object": "01"}
+    /*Message Breakdown:
+    Example String: 05 64 0d c4 12 00 00 00 33 43 c7 c3 01 1e 02 00 00 02 1b e2
+    05 = Msg Start
+    64 = Msg Start (identifies its for a 64 bit system)
+    0d = Length of message in bytes (minus the CRC checks and the Msg start header)
+    c4 = Control byte - identifies type of comm, c4 specifies a point to point message and does not require confirmation
+    12 00 = Destination station, substation id - this identifies station 18 as destination
+    00 00 = Source station, sub station id - this identifies master station as source
+    33 43 = CRC error check for the first 8 bytes
+    c7 = transport header
+    01 = Function code, 01 = Read, 05 = Direct Operate, others unknown
+    
+    */
+    function buildDNP3Script () {
+        var arr1 = ['05', '64', '0D', 'C4',,'00',,'00','C7', 'C3', '01', '1E', '02', '00', '00', '02', 'sha1', 'serial']
+        var msgOut = "", arr2 = [], checkCode = 0, strBuilder = ""
 
-    </div>
-</body>
-<script>
-var inVals = [], ctlType = "c3", ctlAct = "", ctlFunctionCodes = {"Direct Operate": "05", "Read Object": "01"}
 
+        arr1[4] = document.getElementById("targetId").value
+        arr1[6] = document.getElementById("sourceId").value
+        arr1[5] = document.getElementById("targetSubId").value
+        arr1[7] = document.getElementById("sourceSubId").value    
+        arr1[11] = document.getElementById("controlId").value
+        arr1[16] = document.getElementById("hashId").value
+        arr1[17] = document.getElementById("portId").value
 
-function buildDNP3Script () {
-    var arr1 = ['05', '64', '0D', 'C4',,'00',,'00','C7', 'C3', '01', '1E', '02', '00', '00', '02']
-    var msgOut = "", arr2 = [], checkCode = 0, strBuilder = ""
-
-    arr1[4] = document.getElementById("targetId").value
-    arr1[6] = document.getElementById("sourceId").value
-    arr1[10] = document.getElementById("controlId").value
-
-    arr1.forEach(function(element){
-            msgOut += element + ' '
-    })
-
-      
-    document.getElementById('msg').value = msgOut
-}
-
-document.getElementById("sendBtn").addEventListener("click", buildDNP3Script, false)
-
-
-</script>
-</html>
+        arr1.forEach(function(element){
+                msgOut += element + ' '
+        })
+    
+          
+        document.getElementById('msg').value = msgOut
+    }
+    
+    const messengerPackage = (buildDNP3Script) => {
+        console.log(this)
+    }
+    
+    document.getElementById("sendBtn").addEventListener("click", buildDNP3Script, false)
+    
+    
+    </script>
+    </html>

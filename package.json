@@ -14,8 +14,12 @@
   },
   "dependencies": {
     "assert": "^1.4.1",
+    "crypto": "^1.0.1",
     "dnp3-crc": "^1.0.0",
     "fs": "0.0.1-security",
-    "http": "0.0.0"
+    "http": "0.0.0",
+    "mix-hash": "^1.0.1",
+    "node-modbus": "^4.0.1",
+    "sha1": "^1.1.1"
   }
 }
